@@ -1,32 +1,28 @@
 _base_ = [
     '../_base_/models/seg_vit-b16.py',
-    '../_base_/datasets/ade20k_640x640.py', 
-    '../_base_/default_runtime.py',
+    '../_base_/datasets/ade20k_640x640.py', '../_base_/default_runtime.py',
     '../_base_/schedules/schedule_160k.py'
 ]
-
-# Updated to match ViT-Base configuration
-in_channels = 768
+in_channels = 1024
 img_size = 640
-checkpoint = '/kaggle/input/ijepa-vit-base-bingrgb-ep150/pytorch/vit-base/1/jepa-ep150.pth.tar'
-#checkpoint = 'https://download.openmmlab.com/mmsegmentation/v0.5/pretrain/segmenter/vit_large_p16_384_20220308-d4efb41d.pth'
-out_indices = [3, 7, 11]  # Adjusted based on ViT-Base depth
-
+# checkpoint = './pretrained/vit_large_p16_384_20220308-d4efb41d.pth'
+checkpoint = 'https://download.openmmlab.com/mmsegmentation/v0.5/pretrain/segmenter/vit_large_p16_384_20220308-d4efb41d.pth'
+out_indices = [7, 15, 23]
 model = dict(
     pretrained=checkpoint,
     backbone=dict(
         img_size=(640, 640),
-        embed_dims=in_channels,
-        num_layers=12,  # ViT-Base has 12 layers
+        embed_dims=1024,
+        num_layers=24,
         drop_path_rate=0.3,
-        num_heads=12,  # ViT-Base has 12 attention heads
+        num_heads=16,
         out_indices=out_indices),
     decode_head=dict(
         img_size=img_size,
         in_channels=in_channels,
-        channels=in_channels,  # Matching the input channels of the backbone
+        channels=in_channels,
         embed_dims=in_channels // 2,
-        num_heads=12,  # Matching ViT-Base
+        num_heads=16,
         use_stages=len(out_indices),
         loss_decode=dict(
             type='ATMLoss', num_classes=150, dec_layers=len(out_indices), loss_weight=1.0),
@@ -37,7 +33,6 @@ model = dict(
 # jax use different img norm cfg
 img_norm_cfg = dict(
     mean=[127.5, 127.5, 127.5], std=[127.5, 127.5, 127.5], to_rgb=True)
-
 crop_size = (640, 640)
 train_pipeline = [
     dict(type='LoadImageFromFile'),
@@ -51,12 +46,12 @@ train_pipeline = [
     dict(type='DefaultFormatBundle'),
     dict(type='Collect', keys=['img', 'gt_semantic_seg'])
 ]
-
 test_pipeline = [
     dict(type='LoadImageFromFile'),
     dict(
         type='MultiScaleFlipAug',
         img_scale=(2048, 640),
+        # img_ratios=[0.5, 0.75, 1.0, 1.25, 1.5, 1.75],
         flip=False,
         transforms=[
             dict(type='Resize', keep_ratio=True),
@@ -66,20 +61,18 @@ test_pipeline = [
             dict(type='Collect', keys=['img'])
         ])
 ]
-
 data = dict(
     samples_per_gpu=1,
     train=dict(pipeline=train_pipeline),
     val=dict(pipeline=test_pipeline),
-    test=dict(pipeline=test_pipeline)
-)
+    test=dict(pipeline=test_pipeline))
 
 optimizer = dict(_delete_=True, type='AdamW', lr=0.00002, betas=(0.9, 0.999), weight_decay=0.01,
                  paramwise_cfg=dict(custom_keys={'norm': dict(decay_mult=0.),
                                                  'ln': dict(decay_mult=0.),
                                                  'head': dict(lr_mult=10.),
                                                  }))
-
+#
 optimizer_config = dict(
     _delete_=True, grad_clip=dict(max_norm=35, norm_type=2))
 
