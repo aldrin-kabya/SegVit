@@ -3,16 +3,16 @@ _base_ = [
     '../_base_/datasets/ade20k_640x640.py', '../_base_/default_runtime.py',
     '../_base_/schedules/schedule_160k.py'
 ]
-in_channels = 512
-img_size = 512
+in_channels = 1024
+img_size = 640
 # checkpoint = './pretrained/vit_large_p16_384_20220308-d4efb41d.pth'
 checkpoint = 'https://download.openmmlab.com/mmsegmentation/v0.5/pretrain/segmenter/vit_large_p16_384_20220308-d4efb41d.pth'
 out_indices = [7, 15, 23]
 model = dict(
     pretrained=checkpoint,
     backbone=dict(
-        img_size=(512, 512),
-        embed_dims=512,
+        img_size=(640, 640),
+        embed_dims=1024,
         num_layers=12,
         drop_path_rate=0.3,
         num_heads=8,
@@ -27,7 +27,7 @@ model = dict(
         loss_decode=dict(
             type='ATMLoss', num_classes=150, dec_layers=len(out_indices), loss_weight=1.0),
     ),
-    test_cfg=dict(mode='slide', crop_size=(512, 512), stride=(448, 448)),
+    test_cfg=dict(mode='slide', crop_size=(640, 640), stride=(608, 608)),
 )
 
 # jax use different img norm cfg
