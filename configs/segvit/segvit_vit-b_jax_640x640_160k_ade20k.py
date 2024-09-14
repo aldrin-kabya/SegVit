@@ -4,14 +4,14 @@ _base_ = [
     '../_base_/schedules/schedule_160k.py'
 ]
 in_channels = 768
-img_size = 512
+img_size = 640
 checkpoint = 'https://download.openmmlab.com/mmsegmentation/v0.5/pretrain/segmenter/vit_base_p16_384_20220308-96dfe169.pth'
 #checkpoint = 'https://download.openmmlab.com/mmsegmentation/v0.5/pretrain/segmenter/vit_large_p16_384_20220308-d4efb41d.pth'
 out_indices = [5, 7, 11]
 model = dict(
     pretrained=checkpoint,
     backbone=dict(
-        img_size=(512, 512),
+        img_size=(640, 640),
         embed_dims=768,
         num_layers=12,
         drop_path_rate=0.1,
@@ -27,7 +27,7 @@ model = dict(
         loss_decode=dict(
             type='ATMLoss', num_classes=150, dec_layers=len(out_indices), loss_weight=1.0),
     ),
-    test_cfg=dict(mode='slide', crop_size=(512, 512), stride=(341, 341)),
+    test_cfg=dict(mode='slide', crop_size=(640, 640), stride=(608, 608)),
 )
 
 # jax use different img norm cfg
