@@ -21,7 +21,6 @@ from mmseg.utils import collect_env, get_root_logger, setup_multi_processes
 from decode_heads import atm_head, tpn_atm_head
 from losses import atm_loss
 from backbone import vit_shrink
-from tools.model_converters import vit2mmseg
 
 def parse_args():
     parser = argparse.ArgumentParser(description='Train a segmentor')
@@ -123,8 +122,10 @@ def main():
 
     # work_dir is determined in this priority: CLI > segment in file > filename
     if args.work_dir is not None:
+        # update configs according to CLI args if args.work_dir is not None
         cfg.work_dir = args.work_dir
     elif cfg.get('work_dir', None) is None:
+        # use config filename as default work_dir if cfg.work_dir is None
         cfg.work_dir = osp.join('./work_dirs',
                                 osp.splitext(osp.basename(args.config))[0])
     if args.load_from is not None:
@@ -194,28 +195,13 @@ def main():
     meta['seed'] = seed
     meta['exp_name'] = osp.basename(args.config)
 
-    # Convert the checkpoint if needed before loading into the model
-    if args.load_from is not None:
-        # Load the checkpoint
-        checkpoint = torch.load(args.load_from, map_location='cpu')
-        
-        # Convert if necessary using convert_vit
-        converted_ckpt = vit2mmseg.convert_vit(checkpoint)
-
-        # Save the converted checkpoint temporarily or use directly
-        temp_ckpt_path = osp.join(cfg.work_dir, 'converted_checkpoint.pth')
-        torch.save(converted_ckpt, temp_ckpt_path)
-
-        # Use the converted checkpoint in the config
-        cfg.load_from = temp_ckpt_path
-
     model = build_segmentor(
         cfg.model,
         train_cfg=cfg.get('train_cfg'),
         test_cfg=cfg.get('test_cfg'))
     model.init_weights()
 
-    # SyncBN is not supported for DP
+    # SyncBN is not support for DP
     if not distributed:
         warnings.warn(
             'SyncBN is only supported with DDP. To be compatible with DP, '
