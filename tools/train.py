@@ -21,6 +21,8 @@ from mmseg.utils import collect_env, get_root_logger, setup_multi_processes
 from decode_heads import atm_head, tpn_atm_head
 from losses import atm_loss
 from backbone import vit_shrink
+from bingrgb_dataset import BingRGBDataset
+
 
 def parse_args():
     parser = argparse.ArgumentParser(description='Train a segmentor')
