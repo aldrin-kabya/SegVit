@@ -5,7 +5,6 @@ from mmseg.datasets.builder import DATASETS
 class BingRGBDataset(CustomDataset):
     """BingRGB LULC dataset."""
     
-    # These are the class names and background that correspond to the class map
     CLASSES = (
         'background', 'farmland', 'water', 'forest', 'urban_structure', 
         'rural_built_up', 'urban_built_up', 'road', 'meadow', 'marshland', 'brick_factory'
@@ -18,8 +17,8 @@ class BingRGBDataset(CustomDataset):
     ]
     
     def __init__(self, **kwargs):
+        # Remove `reduce_zero_label` here since it will be provided by the configuration
         super(BingRGBDataset, self).__init__(
             img_suffix='.png',
             seg_map_suffix='_labelTrainIds.png',
-            reduce_zero_label=True,
-            **kwargs)
+            **kwargs)  # **kwargs will take care of other arguments from the config
