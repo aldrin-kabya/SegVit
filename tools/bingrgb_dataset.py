@@ -20,5 +20,5 @@ class BingRGBDataset(CustomDataset):
         # Remove `reduce_zero_label` here since it will be provided by the configuration
         super(BingRGBDataset, self).__init__(
             img_suffix='.png',
-            seg_map_suffix='_labelTrainIds.png',
+            seg_map_suffix='_gt_labelTrainIds.png',
             **kwargs)  # **kwargs will take care of other arguments from the config
