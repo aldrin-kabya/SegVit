@@ -1,5 +1,5 @@
 from mmseg.datasets import CustomDataset
-from mmseg.registry import DATASETS
+from mmseg.datasets.builder import DATASETS
 
 @DATASETS.register_module()
 class BingRGBDataset(CustomDataset):
