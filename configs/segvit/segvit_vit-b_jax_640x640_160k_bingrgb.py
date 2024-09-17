@@ -1,6 +1,6 @@
 _base_ = [
     '../_base_/models/seg_vit-b16.py',
-    '../_base_/datasets/ade20k_640x640.py', '../_base_/default_runtime.py',
+    '../_base_/datasets/bingrgb.py', '../_base_/default_runtime.py',
     '../_base_/schedules/schedule_160k.py'
 ]
 in_channels = 768
