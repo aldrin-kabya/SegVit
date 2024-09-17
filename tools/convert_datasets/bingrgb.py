@@ -39,10 +39,10 @@ def convert_bingrgb_to_trainID(image_dir, label_dir, out_img_dir, out_label_dir,
     
     for img_file, label_file in zip(images, labels):
         # Copy image file to output folder
-        shutil.copy(osp.join(image_dir, 'image_patches', img_file), osp.join(out_img_dir, img_subdir, img_file))
+        shutil.copy(osp.join(image_dir, img_file), osp.join(out_img_dir, img_subdir, img_file))
         
         # Convert and save label file
-        rgb_mask = Image.open(osp.join(label_dir, 'label_patches', label_file))
+        rgb_mask = Image.open(osp.join(label_dir, label_file))
         bw_mask = encode_bw_mask(rgb_mask)
         bw_mask.save(osp.join(out_label_dir, img_subdir, label_file.replace('.png', '_labelTrainIds.png')))
 
