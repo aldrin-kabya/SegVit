@@ -203,9 +203,9 @@ def main():
         test_cfg=cfg.get('test_cfg'))
     model.init_weights()
 
-    # Freeze the pretrained layers (e.g., the backbone)
-    for param in model.backbone.parameters():
-        param.requires_grad = False
+    # # Freeze the pretrained backbone encoder layers
+    # for param in model.backbone.parameters():
+    #     param.requires_grad = False
 
     # SyncBN is not support for DP
     if not distributed:

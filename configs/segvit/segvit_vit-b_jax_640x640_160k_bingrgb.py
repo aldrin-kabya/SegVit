@@ -4,7 +4,7 @@ _base_ = [
     '../_base_/schedules/schedule_160k.py'
 ]
 in_channels = 768
-img_size = 640
+img_size = 512
 #checkpoint = 'https://download.openmmlab.com/mmsegmentation/v0.5/pretrain/segmenter/vit_base_p16_384_20220308-96dfe169.pth'
 #checkpoint = 'https://download.openmmlab.com/mmsegmentation/v0.5/pretrain/segmenter/vit_large_p16_384_20220308-d4efb41d.pth'
 checkpoint = '/kaggle/working/converted_checkpoint.pth'
@@ -12,7 +12,7 @@ out_indices = [5, 7, 11]
 model = dict(
     pretrained=checkpoint,
     backbone=dict(
-        img_size=(640, 640),
+        img_size=(512, 512),
         embed_dims=768,
         num_layers=12,
         drop_path_rate=0.1,
@@ -28,17 +28,17 @@ model = dict(
         loss_decode=dict(
             type='ATMLoss', num_classes=150, dec_layers=len(out_indices), loss_weight=1.0),
     ),
-    test_cfg=dict(mode='slide', crop_size=(640, 640), stride=(608, 608)),
+    test_cfg=dict(mode='slide', crop_size=(512, 512), stride=(341, 341)),
 )
 
 # jax use different img norm cfg
 img_norm_cfg = dict(
     mean=[127.5, 127.5, 127.5], std=[127.5, 127.5, 127.5], to_rgb=True)
-crop_size = (640, 640)
+crop_size = (512, 512)
 train_pipeline = [
     dict(type='LoadImageFromFile'),
     dict(type='LoadAnnotations', reduce_zero_label=True),
-    dict(type='Resize', img_scale=(2048, 640), ratio_range=(0.5, 2.0)),
+    dict(type='Resize', img_scale=(2048, 512), ratio_range=(0.5, 2.0)),
     dict(type='RandomCrop', crop_size=crop_size, cat_max_ratio=0.75),
     dict(type='RandomFlip', prob=0.5),
     dict(type='PhotoMetricDistortion'),
@@ -51,11 +51,11 @@ test_pipeline = [
     dict(type='LoadImageFromFile'),
     dict(
         type='MultiScaleFlipAug',
-        img_scale=(2048, 640),
+        img_scale=(2048, 512),
         # img_ratios=[0.5, 0.75, 1.0, 1.25, 1.5, 1.75],
         flip=False,
         transforms=[
-            dict(type='Resize', keep_ratio=True),
+            dict(type='Resize', keep_ratio=True, min_size=512),
             dict(type='RandomFlip'),
             dict(type='Normalize', **img_norm_cfg),
             dict(type='ImageToTensor', keys=['img']),
