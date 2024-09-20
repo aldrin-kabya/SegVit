@@ -6,20 +6,50 @@ import numpy as np
 import shutil
 import argparse
 
-# Class map for BingRGB dataset
+# # Original 11 class map
+# class_map = {
+#     (0, 0, 0): 0,            # background
+#     (0, 255, 0): 1,          # farmland
+#     (0, 0, 255): 2,          # water
+#     (0, 255, 255): 3,        # forest
+#     (128, 0, 0): 4,          # urban_structure
+#     (255, 0, 255): 5,        # rural_built_up
+#     (255, 0, 0): 6,          # urban_built_up
+#     (160, 160, 164): 7,      # road
+#     (255, 255, 0): 8,        # meadow
+#     (255, 251, 240): 9,      # marshland
+#     (128, 0, 128): 10        # brick_factory
+# }
+
+# 1st selected class map
 class_map = {
-    (0, 0, 0): 0,            # background
-    (0, 255, 0): 1,          # farmland
-    (0, 0, 255): 2,          # water
-    (0, 255, 255): 3,        # forest
-    (128, 0, 0): 4,          # urban_structure
-    (255, 0, 255): 5,        # rural_built_up
-    (255, 0, 0): 6,          # urban_built_up
-    (160, 160, 164): 7,      # road
-    (255, 255, 0): 8,        # meadow
-    (255, 251, 240): 9,      # marshland
-    (128, 0, 128): 10        # brick_factory
+    (0, 0, 0): 0,           # background
+    (0, 255, 0): 1,         # farmland
+    (0, 0, 255): 2,         # water
+    (0, 255, 255): 3,       # forest
+    (128, 0, 0): 4,         # urban_structure
+    (255, 0, 255): 4,       # rural_built_up (merged with urban_structure)
+    (255, 0, 0): 4,         # urban_built_up (merged with urban_structure)
+    (160, 160, 164): 4,     # road (merged with urban_structure)
+    (255, 255, 0): 5,       # meadow
+    (255, 251, 240): 5,     # marshland (merged with meadow)
+    (128, 0, 128): 4        # brick_factory (merged with urban_structure)
 }
+
+# # Class map from bdsat paper
+# class_map = {
+#     (0, 0, 0): 0,           # background
+#     (0, 255, 0): 4,         # farmland
+#     (0, 0, 255): 3,         # water
+#     (0, 255, 255): 1,       # forest
+#     (128, 0, 0): 2,         # urban_structure
+#     (255, 0, 255): 2,       # rural_built_up (merged with urban_structure)
+#     (255, 0, 0): 2,         # urban_built_up (merged with urban_structure)
+#     (160, 160, 164): 2,     # road (merged with urban_structure)
+#     (255, 255, 0): 5,       # meadow
+#     (255, 251, 240): 5,     # marshland (merged with meadow)
+#     (128, 0, 128): 2        # brick_factory (merged with urban_structure)
+# }
 
 def encode_bw_mask(rgb_mask, class_map=class_map):
     rgb_mask_array = np.array(rgb_mask)
