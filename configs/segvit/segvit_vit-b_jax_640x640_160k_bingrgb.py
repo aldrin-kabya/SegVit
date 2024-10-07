@@ -5,9 +5,9 @@ _base_ = [
 ]
 in_channels = 768
 img_size = 640
-#checkpoint = 'https://download.openmmlab.com/mmsegmentation/v0.5/pretrain/segmenter/vit_base_p16_384_20220308-96dfe169.pth'
+checkpoint = 'https://download.openmmlab.com/mmsegmentation/v0.5/pretrain/segmenter/vit_base_p16_384_20220308-96dfe169.pth'
 #checkpoint = 'https://download.openmmlab.com/mmsegmentation/v0.5/pretrain/segmenter/vit_large_p16_384_20220308-d4efb41d.pth'
-checkpoint = '/kaggle/working/converted_checkpoint.pth'
+#checkpoint = '/kaggle/working/converted_checkpoint.pth'
 out_indices = [5, 7, 11]
 model = dict(
     pretrained=checkpoint,
